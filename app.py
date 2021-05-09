@@ -5,10 +5,19 @@ import requests
 import pandas as pd
 import streamlit as st
 from copy import deepcopy
+import random
 
 # faking chrome browser
 browser_header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
-
+user_agent_list = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    ]
+user_agent = random.choice(user_agent_list)
+headers = {'User-Agent': user_agent}
 st.set_page_config(layout='wide', initial_sidebar_state='collapsed')
 
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
@@ -66,7 +75,7 @@ date_str = [x.strftime("%d-%m-%Y") for x in date_list]
 final_df = None
 for INP_DATE in date_str:
     URL = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={}&date={}".format(DIST_ID, INP_DATE)
-    response = requests.get(URL, headers=browser_header)
+    response = requests.get(URL, headers=headers)
     if (response.ok) and ('centers' in json.loads(response.text)):
         resp_json = json.loads(response.text)['centers']
         if resp_json is not None:
@@ -122,4 +131,4 @@ if (final_df is not None) and (len(final_df)):
 else:
     st.error("Unable to fetch data currently, please try after sometime")
 
-st.markdown("_- Bhavesh Bhatt_")
+st.markdown("_- Sahil Tanwar_")
